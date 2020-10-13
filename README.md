@@ -6,6 +6,7 @@ Algorytm działa na zasadzie siatki, na której przecięciach mogą znajdować s
 
 Obsługa
 Program obsługiwany jest za pomocą myszki oraz klawiatury. Po uruchomieniu możemy wybrać ilość wierzchołków oraz krawędzi, oraz zaznaczyć interesujące nas opcje w materii skierowania oraz etykietowania krawędzi oraz wierzchołków:
+![Alt text](img/MainMenu.png?raw=true "Menu")
  
 Jeśli wybierzemy etykietowane wierzchołki to program wyświetli okienko z miejscem na wpisanie kolejnym wierzchołkom odpowiednich etykiet(po wpisaniu należy je zatwierdzać enterem) :
  
