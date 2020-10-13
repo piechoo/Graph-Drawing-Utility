@@ -1,8 +1,13 @@
 # Graph-Drawing-Utility
 Graph drawing utility written in java to visually represent simple graphs
-Opis Projektu
-Algorytm Rysowania grafu oparty jest na obiektowej implementacji grafu, w której każdy wierzchołek posiada swój stopień, oraz numer ( lub jeśli wybrana została odpowiednia opcja, etykietę ).Każdy wierzchołek posiada natomiast numery wierzchołków, które łączy, oraz jeśli została wybrana taka opcja wagę. Graf składa się z list wierzchołków oraz krawędzi oraz flag dodatkowych opcji takich jak skierowanie grafu bądź etykietowanie wierzchołków i krawędzi.
-Algorytm działa na zasadzie siatki, na której przecięciach mogą znajdować się wierzchołki. Przy każdym dodawanym wierzchołku algorytm oblicza najoptymalniejsze koordynaty dla wierzchołka ( takie, w których dzieli go jak najmniejsza odległość od jego sąsiadów )  oraz sprawdza czy w danym miejscu nie znajduje się już inny wierzchołek, lub czy w danym miejscu wierzchołek nie leżałby w jednej linii z więcej niż jednym sąsiadem.
+
+Project Description:
+This graph drawing algorithm is based on object implementation of  graph, in which every node contains its degree and number (or if naming option was selected its name).
+Every edge contains numbers of nodes that it is connecting, and if option of weighted edges was selected it also contains its weight.
+Graph is made of list of edges, list of nodes and additional flags such as is the graph directed or naming nodes and weighting edges.
+Algorithm is working on the basis of two dimensional mesh, where only on its nodes can graph nodes occur.
+With every new node added algorithm computes the most optimal coordiantes for this node ( the ones in which it is as close as possible to its neighbours), and checks if chosen coordinates are not already used by other node,
+or if node would be in one line with more than one of its neighbours.
 
 Obsługa
 Program obsługiwany jest za pomocą myszki oraz klawiatury. Po uruchomieniu możemy wybrać ilość wierzchołków oraz krawędzi, oraz zaznaczyć interesujące nas opcje w materii skierowania oraz etykietowania krawędzi oraz wierzchołków:
@@ -11,7 +16,7 @@ Program obsługiwany jest za pomocą myszki oraz klawiatury. Po uruchomieniu mo�
  
 Jeśli wybierzemy etykietowane wierzchołki to program wyświetli okienko z miejscem na wpisanie kolejnym wierzchołkom odpowiednich etykiet(po wpisaniu należy je zatwierdzać enterem) :
 
-![Alt text](img/NamingNodes.png?raw=true "Naming nodes")
+->![Alt text](img/NamingNodes.png?raw=true "Naming nodes")<-
  
 Następnie ( lub jeśli nie wybraliśmy opcji etykietowania wierzchołków ) otrzymamy okno, w którym należy wprowadzić krawędzie (jeśli graf jest skierowany to pod uwagę brane jest źródło oraz cel krawędzi) oraz w przypadku wybrania tej funkcji należy wpisać wagi krawędzi (krawędzie zaczynają numerację od 0 ) :
  
