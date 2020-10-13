@@ -9,23 +9,25 @@ Algorithm is working on the basis of two dimensional mesh, where only on its nod
 With every new node added algorithm computes the most optimal coordiantes for this node ( the ones in which it is as close as possible to its neighbours), and checks if chosen coordinates are not already used by other node,
 or if node would be in one line with more than one of its neighbours.
 
-Obsługa
-Program obsługiwany jest za pomocą myszki oraz klawiatury. Po uruchomieniu możemy wybrać ilość wierzchołków oraz krawędzi, oraz zaznaczyć interesujące nas opcje w materii skierowania oraz etykietowania krawędzi oraz wierzchołków:
+
+Using the program
+Program is operated with mouse and keyboard. After launching user can choose number of nodes and edges, and choose options in term of if the graph is directed and if nodes or edges should be named:
 
 ![Alt text](img/MainMenu.png?raw=true "Menu")
  
-Jeśli wybierzemy etykietowane wierzchołki to program wyświetli okienko z miejscem na wpisanie kolejnym wierzchołkom odpowiednich etykiet(po wpisaniu należy je zatwierdzać enterem) :
+If user chooses named nodes program will show window with table to write names for subsequent nodes ( after writing the name user has to accept it by pressing enter) :
 
 ->![Alt text](img/NamingNodes.png?raw=true "Naming nodes")<-
  
-Następnie ( lub jeśli nie wybraliśmy opcji etykietowania wierzchołków ) otrzymamy okno, w którym należy wprowadzić krawędzie (jeśli graf jest skierowany to pod uwagę brane jest źródło oraz cel krawędzi) oraz w przypadku wybrania tej funkcji należy wpisać wagi krawędzi (krawędzie zaczynają numerację od 0 ) :
+Afterwards ( or if user did not choose to name nodes) user see window in which he should enter edges ( if graph is directed then it is important to write source and goal of the edge correctly) and if option of naming edges was selected there is also place to write edge names (IMPORTANT: in writing source and goal of edge please remember that nodes numerations begins from 0):
  
  ![Alt text](img/ConnectingEdges.png?raw=true "Connecting and naming edges")
  
-Po zaakceptowaniu danych program rysuje graf na ich podstawie :
+After accepting all data program will draw graph:
+
 
 ![Alt text](img/SimpleExample.png?raw=true "Simple graph example")
  
-W przypadku większej ilości wierzchołków wygląda to na przykład tak:
+In case of a little more complicated data the result is as follows:
  
 ![Alt text](img/ComplicatedExample.png?raw=true "A little less simple graph example")
