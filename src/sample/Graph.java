@@ -9,19 +9,19 @@ import java.util.List;
 
 
 
-public class Grapf {
+public class Graph {
     int nodeNumber;
     int edgeNumber;
-    boolean kierownica;
-    boolean waga_k;
-    boolean waga_w;
-    ArrayList<Node> wezly= new ArrayList<>();
-    ArrayList<Edge> krawedzie= new ArrayList<>();
+    boolean directed;
+    boolean edgeWeight;
+    boolean nodeWeight;
+    ArrayList<Node> nodes = new ArrayList<>();
+    ArrayList<Edge> edges = new ArrayList<>();
     void addEdges()
     {
         for(int i=0;i<edgeNumber;i++)
         {
-            krawedzie.add(new Edge(0,0,0," 1 "));
+            edges.add(new Edge(0,0,0," 1 "));
         }
     }
 
@@ -29,21 +29,21 @@ public class Grapf {
     {
         for(int i=0;i<nodeNumber;i++)
         {
-            wezly.add(new Node((i+1)));
-            wezly.get(i).setWage(String.valueOf(i+1));
+            nodes.add(new Node((i+1)));
+            nodes.get(i).setWage(String.valueOf(i+1));
         }
     }
-    void setKierownica(boolean skier)
+    void setDirected(boolean skier)
     {
-        kierownica = skier;
+        directed = skier;
     }
-    void setWaga_k(boolean skier)
+    void setEdgeWeight(boolean skier)
     {
-        waga_k = skier;
+        edgeWeight = skier;
     }
-    void setWaga_w(boolean skier)
+    void setNodeWeight(boolean skier)
     {
-        waga_w = skier;
+        nodeWeight = skier;
     }
     void setNumbers(int nodes, int edges)
     {

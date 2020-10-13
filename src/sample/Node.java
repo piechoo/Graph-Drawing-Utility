@@ -18,17 +18,17 @@ public class Node {
     }
 
     int value;
-    int stopien;
+    int degree;
     int cords[]=new int[2];
     Node(int val)
     {
         value = val;
-        stopien = 0;
+        degree = 0;
     }
-    List<Integer> sonsiad = new ArrayList<Integer>();
+    List<Integer> neighbour = new ArrayList<Integer>();
     void addIn(int sth){
-        sonsiad.add(sth);
-        stopien++;
+        neighbour.add(sth);
+        degree++;
     }
     void setCords(int x, int y)
     {

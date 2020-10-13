@@ -1,11 +1,9 @@
 package sample;
 
-import com.sun.scenario.effect.impl.sw.sse.SSEBlend_SRC_OUTPeer;
+
 import javafx.application.Application;
-import javafx.event.EventHandler;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
-import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -18,18 +16,15 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.stage.Window;
-import javafx.util.StringConverter;
 import javafx.util.converter.IntegerStringConverter;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
 import static java.lang.Math.abs;
 
 public class Main extends Application {
-    Grapf g1 = new Grapf();
+    Graph g1 = new Graph();
 
     @Override
     public void start(Stage primaryStage) throws Exception{
@@ -40,10 +35,10 @@ public class Main extends Application {
 
 
         primaryStage.setTitle("Graph drawing utility");
-        Label labelW = new Label("Wybierz liczbe wierzcholkow");
-        Label labelK = new Label("Wybierz liczbe krawedzi");
+        Label labelW = new Label("Choose number of nodes");
+        Label labelK = new Label("Choose number of edges");
 
-        Button acc = new Button("Akceptuj");
+        Button acc = new Button("Accept");
 
 
 
@@ -65,9 +60,9 @@ public class Main extends Application {
         sliderK.setShowTickMarks(true);
         sliderK.setShowTickLabels(true);
 
-        CheckBox checkBox1 = new CheckBox("Skierowany");
-        CheckBox checkBox2 = new CheckBox("Etykietowane krawedzie");
-        CheckBox checkBox3 = new CheckBox("Etykietowane wierzcholki");
+        CheckBox checkBox1 = new CheckBox("Directed");
+        CheckBox checkBox2 = new CheckBox("Named edges");
+        CheckBox checkBox3 = new CheckBox("Named nodes");
 
         VBox vbox = new VBox(labelW, sliderW);
         vbox.getChildren().add(labelK);
@@ -87,14 +82,14 @@ public class Main extends Application {
 
         acc.setOnAction(value ->  {
             ((Stage)((Button)value.getSource()).getScene().getWindow()).setIconified(true);
-            g1.setKierownica(checkBox1.isSelected());
-            g1.setWaga_k(checkBox2.isSelected());
-            g1.setWaga_w(checkBox3.isSelected());
+            g1.setDirected(checkBox1.isSelected());
+            g1.setEdgeWeight(checkBox2.isSelected());
+            g1.setNodeWeight(checkBox3.isSelected());
             g1.setNumbers((int)sliderW.getValue(), (int)sliderK.getValue());
             g1.addEdges();
             g1.addNodes();
-            VBox vBoxer = new VBox(new Label("Podaj zrodla (wierzcholki wychodzace), cele (wierzcholki wchodzace) oraz koszty krawedzi:"));
-            vBoxer.getChildren().add(new Label("Krawedzie: "+(int)sliderK.getValue()+" Wierzcholki: "+(int)sliderW.getValue() ));
+            VBox vBoxer = new VBox(new Label("Please give source and goal nodes of the edge and name the edge: "));
+            vBoxer.getChildren().add(new Label("Edges: "+(int)sliderK.getValue()+" Nodes: "+(int)sliderW.getValue() ));
 
 
             //utworzenie tabeli krawedzi do edycji
@@ -106,7 +101,7 @@ public class Main extends Application {
             tableView1.setEditable(true);
 
 
-            TableColumn<Edge, Integer> column1 = new TableColumn<>("Zrodlo Krawedzi");
+            TableColumn<Edge, Integer> column1 = new TableColumn<>("Source of edge");
             column1.setCellValueFactory(new PropertyValueFactory<Edge,Integer>("from"));
 
             column1.setCellFactory(
@@ -117,7 +112,7 @@ public class Main extends Application {
             ).setFrom(t.getNewValue()));
 
 
-            TableColumn<Edge, Integer> column2 = new TableColumn<>("Cel Krawedzi");
+            TableColumn<Edge, Integer> column2 = new TableColumn<>("Goal of edge");
             column2.setCellValueFactory(new PropertyValueFactory<>("to"));
             column2.setCellFactory(
                     TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
@@ -127,7 +122,7 @@ public class Main extends Application {
             ).setTo(t.getNewValue()));
 
 
-            TableColumn<Edge, String> column3 = new TableColumn<>("Waga Krawedzi");
+            TableColumn<Edge, String> column3 = new TableColumn<>("Name of edge");
             column3.setCellValueFactory(new PropertyValueFactory<>("wage"));
             column3.setCellFactory(TextFieldTableCell.<Edge>forTableColumn());
 
@@ -136,7 +131,7 @@ public class Main extends Application {
             ).setWage(t.getNewValue()));
 
 
-            TableColumn<Node, String> column4 = new TableColumn<>("Waga Wierzcholka");
+            TableColumn<Node, String> column4 = new TableColumn<>("Name of node");
             column4.setCellValueFactory(new PropertyValueFactory<>("wage"));
             column4.setCellFactory(TextFieldTableCell.<Node>forTableColumn());
 
@@ -146,16 +141,16 @@ public class Main extends Application {
 
             tableView.getColumns().add(column1);
             tableView.getColumns().add(column2);
-            if(g1.waga_k==true)
+            if(g1.edgeWeight==true)
                 tableView.getColumns().add(column3);
 
             for(int i=0;i<g1.edgeNumber;i++)
             {
-                tableView.getItems().add(g1.krawedzie.get(i));
+                tableView.getItems().add(g1.edges.get(i));
             }
 
             vBoxer.getChildren().add(tableView);
-            Button acp = new Button("Akceptuj");
+            Button acp = new Button("Accept");
             vbox.setSpacing(10);
             vBoxer.setAlignment(Pos.BOTTOM_CENTER);
             vBoxer.getChildren().add(acp);
@@ -168,17 +163,17 @@ public class Main extends Application {
             stage.show();
 
 
-            if(g1.waga_w==true) {
+            if(g1.nodeWeight==true) {
                 tableView1.getColumns().add(column4);
                 for(int i=0;i<g1.nodeNumber;i++)
                 {
-                    tableView1.getItems().add(g1.wezly.get(i));
+                    tableView1.getItems().add(g1.nodes.get(i));
                 }
 
-                VBox vBoxer1 = new VBox(new Label("Podaj wagi wierzcholkow:"));
-                vBoxer1.getChildren().add(new Label(" Ilosc wierzcholkow: "+(int)sliderW.getValue() ));
+                VBox vBoxer1 = new VBox(new Label("Please give node names:"));
+                vBoxer1.getChildren().add(new Label(" Number of nodes: "+(int)sliderW.getValue() ));
                 vBoxer1.getChildren().add(tableView1);
-                Button acp1 = new Button("Akceptuj");
+                Button acp1 = new Button("Accept");
                 vBoxer1.setSpacing(10);
                 vBoxer1.setAlignment(Pos.BOTTOM_CENTER);
                 vBoxer1.getChildren().add(acp1);
@@ -203,16 +198,16 @@ public class Main extends Application {
                 int in,out;
                 for(int i=0; i<g1.edgeNumber;i++)
                 {
-                    in=g1.krawedzie.get(i).getTo();
-                    out=g1.krawedzie.get(i).getFrom();
+                    in=g1.edges.get(i).getTo();
+                    out=g1.edges.get(i).getFrom();
 
-                    g1.wezly.get(in).addIn(out);
-                    g1.wezly.get(out).addIn(in);
+                    g1.nodes.get(in).addIn(out);
+                    g1.nodes.get(out).addIn(in);
                 }
 
                 //rysowanie canvasem
                 Stage rysowanko = new Stage();
-                rysowanko.setTitle("Rysowanie grafu");
+                rysowanko.setTitle("Drawing Graph");
 
                 Canvas canvas = new Canvas(1000, 700);
                 GraphicsContext gc = canvas.getGraphicsContext2D();
@@ -260,8 +255,8 @@ public class Main extends Application {
 
         for(int i=0;i<g1.nodeNumber;i++)
         {
-            if(g1.wezly.get(i).stopien<stp) {
-                stp = g1.wezly.get(i).stopien;
+            if(g1.nodes.get(i).degree<stp) {
+                stp = g1.nodes.get(i).degree;
                 act = i;
             }
         }
@@ -270,14 +265,14 @@ public class Main extends Application {
             gc.strokeOval(cordy[0], cordy[1], 50, 50);
             center[0]=cordy[0]+15;
             center[1]=cordy[1]+25;
-            gc.fillText(g1.wezly.get(act).getWage(), center[0]-textlength(g1.wezly.get(act).getWage()), center[1]);//+15 , +35
-            g1.wezly.get(act).setCords(cordy[0],cordy[1]);
+            gc.fillText(g1.nodes.get(act).getWage(), center[0]-textlength(g1.nodes.get(act).getWage()), center[1]);//+15 , +35
+            g1.nodes.get(act).setCords(cordy[0],cordy[1]);
 
             stp=0;
-                    for(int i=0; i<g1.wezly.get(act).sonsiad.size();i++) {
-                        if ((g1.wezly.get(g1.wezly.get(act).sonsiad.get(i)).stopien > stp)&&!(used.contains(g1.wezly.get(act).sonsiad.get(i)))) {
-                            stp = g1.wezly.get(g1.wezly.get(act).sonsiad.get(i)).stopien;
-                            buf = g1.wezly.get(act).sonsiad.get(i);
+                    for(int i=0; i<g1.nodes.get(act).neighbour.size();i++) {
+                        if ((g1.nodes.get(g1.nodes.get(act).neighbour.get(i)).degree > stp)&&!(used.contains(g1.nodes.get(act).neighbour.get(i)))) {
+                            stp = g1.nodes.get(g1.nodes.get(act).neighbour.get(i)).degree;
+                            buf = g1.nodes.get(act).neighbour.get(i);
                         }
                     }
                     prev=act;
@@ -287,15 +282,15 @@ public class Main extends Application {
                     center[0]=cordy[0]+15;
                     center[1]=cordy[1]+25;
                     gc.strokeOval(cordy[0], cordy[1], 50, 50);
-                    gc.fillText(g1.wezly.get(act).getWage(), center[0]-textlength(g1.wezly.get(act).getWage()), center[1]);
-                    g1.wezly.get(act).setCords(cordy[0],cordy[1]);
+                    gc.fillText(g1.nodes.get(act).getWage(), center[0]-textlength(g1.nodes.get(act).getWage()), center[1]);
+                    g1.nodes.get(act).setCords(cordy[0],cordy[1]);
                     stp=0;
-                while(used.size()<g1.wezly.size())
+                while(used.size()<g1.nodes.size())
                 {
-                    for(int i=0; i<g1.wezly.get(act).sonsiad.size();i++) {
-                        if ((g1.wezly.get(g1.wezly.get(act).sonsiad.get(i)).stopien > stp)&&!(used.contains(g1.wezly.get(act).sonsiad.get(i)))) {
-                            stp = g1.wezly.get(g1.wezly.get(act).sonsiad.get(i)).stopien;
-                            buf = g1.wezly.get(act).sonsiad.get(i);
+                    for(int i=0; i<g1.nodes.get(act).neighbour.size();i++) {
+                        if ((g1.nodes.get(g1.nodes.get(act).neighbour.get(i)).degree > stp)&&!(used.contains(g1.nodes.get(act).neighbour.get(i)))) {
+                            stp = g1.nodes.get(g1.nodes.get(act).neighbour.get(i)).degree;
+                            buf = g1.nodes.get(act).neighbour.get(i);
                         }
                     }
                     prev = act;
@@ -304,7 +299,7 @@ public class Main extends Application {
                         act = buf;
                     }
                     if(act!=prev) {
-                        best(cordy, gc, act, prev, used);
+                        bestFitingCoords(cordy, gc, act, prev, used);
                         stp=0;
                     }
                     else
@@ -314,22 +309,22 @@ public class Main extends Application {
                         stp=0;
                             iter++;
                             iter=iter%used.size();
-                        cordy[0]=g1.wezly.get(act).cords[0];
-                        cordy[1]=g1.wezly.get(act).cords[1];
+                        cordy[0]=g1.nodes.get(act).cords[0];
+                        cordy[1]=g1.nodes.get(act).cords[1];
                         center[0]=cordy[0]+15;
                         center[1]=cordy[1]+25;
                     }
 
                 }
-                linie(gc);
+                drawingEdgeLines(gc);
 
 
     }
     boolean conect(List<Integer> used,int act, int prev)
     {
-        for(int i=0;i<g1.wezly.get(act).sonsiad.size(); i++)
+        for(int i=0;i<g1.nodes.get(act).neighbour.size(); i++)
         {
-            if((g1.wezly.get(act).sonsiad.get(i)!=prev)&&used.contains(g1.wezly.get(act).sonsiad.get(i)))
+            if((g1.nodes.get(act).neighbour.get(i)!=prev)&&used.contains(g1.nodes.get(act).neighbour.get(i)))
             {
                 return true;
             }
@@ -337,34 +332,34 @@ public class Main extends Application {
         return false;
     }
 
-    void linie(GraphicsContext gc) {
+    void drawingEdgeLines(GraphicsContext gc) {
         int[] cf= new int [2];
         int [] ct = new int [2];
         int [] scf = new int [2];
         int [] sct = new int [2];
         double []md = new double[2];
-        for (int i = 0; i < g1.krawedzie.size(); i++)
+        for (int i = 0; i < g1.edges.size(); i++)
         {
-            cf=g1.wezly.get(g1.krawedzie.get(i).getFrom()).cords ;
-            ct=g1.wezly.get(g1.krawedzie.get(i).getTo()).cords ;
-            md=prosta(cf[0]+25,ct[0]+25,cf[1]+25,ct[1]+25);
-            sct=skrocenie(cf[0]+25, cf[1]+25, ct[0]+25, ct[1]+25,md[0],md[1],25.0);
-            scf=skrocenie(ct[0]+25, ct[1]+25, cf[0]+25, cf[1]+25,md[0],md[1],25.0);
+            cf=g1.nodes.get(g1.edges.get(i).getFrom()).cords ;
+            ct=g1.nodes.get(g1.edges.get(i).getTo()).cords ;
+            md=orthogonalLine(cf[0]+25,ct[0]+25,cf[1]+25,ct[1]+25);
+            sct=shortenLineForArrow(cf[0]+25, cf[1]+25, ct[0]+25, ct[1]+25,md[0],md[1],25.0);
+            scf=shortenLineForArrow(ct[0]+25, ct[1]+25, cf[0]+25, cf[1]+25,md[0],md[1],25.0);
 
 
             gc.beginPath();
             gc.moveTo(scf[0], scf[1]);
             gc.lineTo(sct[0], sct[1]);
             gc.stroke();
-            if(g1.kierownica==true)// strzalki
+            if(g1.directed==true)// strzalki
             {
 
-                szczalki(scf[0],scf[1],sct[0],sct[1],gc,15.0);
+                drawingArrows(scf[0],scf[1],sct[0],sct[1],gc,15.0);
 
             }
-            if(g1.waga_k==true)// wagi krawedzi
+            if(g1.edgeWeight==true)// wagi krawedzi
             {
-                waga_k(scf[0],scf[1],sct[0],sct[1],gc,g1.krawedzie.get(i).getWage());
+                drawingEdgeName(scf[0],scf[1],sct[0],sct[1],gc,g1.edges.get(i).getWage());
 
             }
 
@@ -374,14 +369,14 @@ public class Main extends Application {
     }
 
 
-    void best(int[] cor, GraphicsContext gc,int act,int prev, List<Integer> used)
+    void bestFitingCoords(int[] cor, GraphicsContext gc,int act,int prev, List<Integer> used)
     {
         List<Integer> sasiady = new ArrayList<>();
-        for(int i=0;i<g1.wezly.get(act).sonsiad.size(); i++)
+        for(int i=0;i<g1.nodes.get(act).neighbour.size(); i++)
         {
-            if((g1.wezly.get(act).sonsiad.get(i)!=prev)&&used.contains(g1.wezly.get(act).sonsiad.get(i)))
+            if((g1.nodes.get(act).neighbour.get(i)!=prev)&&used.contains(g1.nodes.get(act).neighbour.get(i)))
             {
-                sasiady.add(g1.wezly.get(act).sonsiad.get(i));
+                sasiady.add(g1.nodes.get(act).neighbour.get(i));
             }
         }
         double odleglosc=1E15   ;
@@ -392,20 +387,19 @@ public class Main extends Application {
         int center[] = new int[2];
         double bufer=0;
         int najmniejszy=0;
-        if(g1.wezly.get(prev).stopien<4) {
+        if(g1.nodes.get(prev).degree<4) {
             for (int i = 0; i < 4; i++) {
                 for (int j = 0; j < sasiady.size(); j++) {
-                    corx = g1.wezly.get(sasiady.get(j)).cords[0];
-                    cory = g1.wezly.get(sasiady.get(j)).cords[1];
+                    corx = g1.nodes.get(sasiady.get(j)).cords[0];
+                    cory = g1.nodes.get(sasiady.get(j)).cords[1];
                     bufer += c_val(cor[0] + xs[i], corx, cor[1] + ys[i], cory);
                 }
-                if(act == 2)
-                    System.out.println(" odl "+odleglosc+" a bufer to "+bufer+" dla i = "+i);
-                if ((bufer < odleglosc) && (!(point_colide(cor[0] + xs[i], cor[1] + ys[i], used,act)))) {
+                //if(act == 2)
+
+                if ((bufer < odleglosc) && (!(pointColide(cor[0] + xs[i], cor[1] + ys[i], used,act)))) {
                     odleglosc = bufer;
                     najmniejszy = i;
-                    if(act == 2)
-                        System.out.println(" wybriera kordy :"+(cor[0]+xs[i])+" ,"+(cor[1]+ys[najmniejszy])+" bo ma odl "+odleglosc);
+
 
                 }
                 bufer = 0;
@@ -415,13 +409,13 @@ public class Main extends Application {
         {
             for (int i = 0; i < 8; i++) {
                 for (int j = 0; j < sasiady.size(); j++) {
-                    corx = g1.wezly.get(sasiady.get(j)).cords[0];
-                    cory = g1.wezly.get(sasiady.get(j)).cords[1];
+                    corx = g1.nodes.get(sasiady.get(j)).cords[0];
+                    cory = g1.nodes.get(sasiady.get(j)).cords[1];
                     bufer += c_val(cor[0] + xs[i], corx, cor[1] + ys[i], cory);
                 }
 
 
-                if ((bufer < odleglosc) && (!(point_colide(cor[0] + xs[i], cor[1] + ys[i], used,act)))) {
+                if ((bufer < odleglosc) && (!(pointColide(cor[0] + xs[i], cor[1] + ys[i], used,act)))) {
                     odleglosc = bufer;
                     najmniejszy = i;
                 }
@@ -435,22 +429,22 @@ public class Main extends Application {
         center[0]=cor[0]+15;
         center[1]=cor[1]+25;
         gc.strokeOval(cor[0], cor[1], 50, 50);
-        gc.fillText(g1.wezly.get(act).getWage(), center[0]-textlength(g1.wezly.get(act).getWage()), center[1]);//+15 , +35
-        //System.out.println("wierzcholek nr "+(act+1)+" wybriera kordy :"+cor[0]+" ,"+cor[1]);
-        g1.wezly.get(act).setCords(cor[0],cor[1]);
+        gc.fillText(g1.nodes.get(act).getWage(), center[0]-textlength(g1.nodes.get(act).getWage()), center[1]);//+15 , +35
+
+        g1.nodes.get(act).setCords(cor[0],cor[1]);
 
     }
-    boolean point_colide(int x, int y,List<Integer> used,int act)
+    boolean pointColide(int x, int y,List<Integer> used,int act)
     {
         ArrayList<Integer> sasiedzi = new ArrayList<>();
         if(x<0||x>950||y<0||y>650)
             return true;
         for(Integer spr : used){
-            if(abs(g1.wezly.get(spr).cords[0]-x)<100&&abs(g1.wezly.get(spr).cords[1]-y)<100) {
+            if(abs(g1.nodes.get(spr).cords[0]-x)<100&&abs(g1.nodes.get(spr).cords[1]-y)<100) {
 
                 return true;
             }
-                if(g1.wezly.get(act).sonsiad.contains(spr))
+                if(g1.nodes.get(act).neighbour.contains(spr))
                 sasiedzi.add(spr);
         }
         if(sasiedzi.size()>=2) {
@@ -458,17 +452,17 @@ public class Main extends Application {
             ArrayList<Integer> ygreki = new ArrayList<>();
             for (Integer wsp : sasiedzi) {
 
-                if(!iksy.contains(g1.wezly.get(wsp).cords[0]))
-                    iksy.add(g1.wezly.get(wsp).cords[0]);
-                else if(iksy.contains(g1.wezly.get(wsp).cords[0])&&g1.wezly.get(wsp).cords[0]==x) {
+                if(!iksy.contains(g1.nodes.get(wsp).cords[0]))
+                    iksy.add(g1.nodes.get(wsp).cords[0]);
+                else if(iksy.contains(g1.nodes.get(wsp).cords[0])&&g1.nodes.get(wsp).cords[0]==x) {
 
                     return true;
                 }
-                if(!ygreki.contains(g1.wezly.get(wsp).cords[1]))
-                    ygreki.add(g1.wezly.get(wsp).cords[1]);
-                else if(ygreki.contains(g1.wezly.get(wsp).cords[1])&&g1.wezly.get(wsp).cords[1]==y) {
+                if(!ygreki.contains(g1.nodes.get(wsp).cords[1]))
+                    ygreki.add(g1.nodes.get(wsp).cords[1]);
+                else if(ygreki.contains(g1.nodes.get(wsp).cords[1])&&g1.nodes.get(wsp).cords[1]==y) {
                     if(act==2)
-                        System.out.println("tutaj kurwa ygreh sonsiad nr"+(wsp+1));
+
                     return true;
                 }
             }
@@ -476,7 +470,7 @@ public class Main extends Application {
 
         return false;
     }
-    int[] skrocenie(int x1,int y1,int x2,int y2, double m, double d, double ile)
+    int[] shortenLineForArrow(int x1,int y1,int x2,int y2, double m, double d, double ile)
     {
         int[] ret = new int [2];
         if(x1==x2)
@@ -502,7 +496,7 @@ public class Main extends Application {
             return ret;
         }
 
-        double []buf=dlugosc(x2,y2,m,d,ile);
+        double []buf=length(x2,y2,m,d,ile);
         if((buf[0]<x1 && buf[0]>x2)||(buf[0]>x1 && buf[0]<x2)) {
             ret[1] = (int) buf[1];
             ret[0] = (int) buf[0];
@@ -515,7 +509,7 @@ public class Main extends Application {
         return ret;
     }
 
-    double [] prosta(int x1, int x2, int y1, int y2)
+    double [] orthogonalLine(int x1, int x2, int y1, int y2)
     {
         double [] ab = new double[2];
         ab[0]=(double)(y2-y1)/(x2-x1);
@@ -523,7 +517,7 @@ public class Main extends Application {
         return ab;
     }
 
-    void szczalki(int x1, int y1, int tox2, int toy2, GraphicsContext gc, double ile )
+    void drawingArrows(int x1, int y1, int tox2, int toy2, GraphicsContext gc, double ile )
     {
         if(x1==tox2)
         {
@@ -554,10 +548,10 @@ public class Main extends Application {
 
         else
         {
-            double [] md = prosta(x1,tox2,y1,toy2);
+            double [] md = orthogonalLine(x1,tox2,y1,toy2);
             int[] sk = new int[2];
 
-            double []buf=dlugosc(tox2,toy2,md[0],md[1],ile);
+            double []buf=length(tox2,toy2,md[0],md[1],ile);
             if((buf[0]<x1 && buf[0]>tox2)||(buf[0]>x1 && buf[0]<tox2)) {
                 sk[1] = (int) buf[1];
                 sk[0] = (int) buf[0];
@@ -568,7 +562,7 @@ public class Main extends Application {
             }
 
             double noweD = (sk[1]+sk[0]/md[0]);
-            double [] wsp = dlugosc(sk[0],sk[1],(-1/md[0]),noweD,15.0);
+            double [] wsp = length(sk[0],sk[1],(-1/md[0]),noweD,15.0);
 
             gc.fillPolygon(new double[]{tox2, wsp[0],wsp[2]},
                     new double[]{toy2, wsp[1], wsp[3]}, 3);
@@ -577,7 +571,7 @@ public class Main extends Application {
 
     }
 
-    double [] dlugosc(int x, int y, double m, double d,double ile)
+    double [] length(int x, int y, double m, double d,double ile)
     {
         double [] ret = new double [4];
 
@@ -595,9 +589,9 @@ public class Main extends Application {
     }
 
 
-    void waga_k(int x1, int y1, int x2, int y2, GraphicsContext gc, String text)
+    void drawingEdgeName(int x1, int y1, int x2, int y2, GraphicsContext gc, String text)
     {
-        double [] md = prosta(x1,x2,y1,y2);
+        double [] md = orthogonalLine(x1,x2,y1,y2);
         int cor[]=new int[2];
         cor[0] = (x1+x2)/2;
         cor[1] = (y1+y2)/2;
@@ -646,6 +640,8 @@ public class Main extends Application {
     {
         return (int) (Math.pow((x1-x2),2)+Math.pow((y1-y2),2));
     }
+
+
     public static void main(String[] args) {
         launch(args);
     }
